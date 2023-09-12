@@ -4,17 +4,43 @@ import SingleProduct from './SingleProduct';
 import Filters from './Filters';
 
 const Home = () => {
-    const { state } = CartState()
+    const { state: { products },
+    productState: { sort, byStock, byFastDelivery, byRating, searchQuery }
+  } = CartState();
 
-    console.log(state.products)
-    console.log(state)
+  const transformedProducts = () => {
+    let sorted = products;
 
+    if(sort) {
+      sorted = sorted.sort((a, b) => 
+        sort === "lowToHigh" ? a.price-b.price : b.price-a.price
+      );
+    }
+
+    if(!byStock) {
+      sorted = sorted.filter((prod) => prod.inStock)
+    }
+
+    if(byFastDelivery) {
+      sorted = sorted.filter((prod) => prod.byFastDelivery)
+    }
+
+    if(byRating) {
+      sorted = sorted.filter((prod) => prod.ratings === byRating)
+    }
+
+    if(searchQuery) {
+      sorted = sorted.filter((prod) => prod.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    }
+
+    return sorted;
+  }
 
   return (
     <div className='home'>
         <Filters />
         <div className='productContainer'>
-          {state.products?.length && state.products.map((prod) => (
+          {transformedProducts()?.length && transformedProducts().map((prod) => (
               <SingleProduct prod={prod} key={prod.id}/>
           ))}
         </div>

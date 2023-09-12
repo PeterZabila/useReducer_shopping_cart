@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaShoppingCart } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
+import { CartState } from '../context/Context'
 import {
   Badge,
   Button,
@@ -13,6 +14,8 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
+const { state: { cart }, dispatch, productDispatch } = CartState()
+
   return (
     <Navbar bg="dark" variant="black" style={{ height: 80 }}>
       <Container>
@@ -24,18 +27,24 @@ const Header = () => {
                 style={{ width: 500 }}
                 placeholder="Search a product"
                 className='m-auto'
+                onChange={(e) => {
+                  productDispatch({
+                    type: "FILTER_BY_SEARCH",
+                    payload: e.target.value
+                  })
+                }}
             />
         </Navbar.Text>
         <Nav>
           <Dropdown align={{ sm:"right" }}>
             <Dropdown.Toggle variant="success">
               <FaShoppingCart color="white" fontSize="25px" />
-              <Badge></Badge>
+              <Badge>{ cart.length }</Badge>
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{ minWidth: 370 }}>
                 <span style={{ padding: 10 }}>Cart is empty</span>
-              {/* {cart.length > 0 ? (
+              {cart.length > 0 ? (
                 <>
                   {cart.map((prod) => (
                     <span className="cartitem" key={prod.id}>
@@ -46,7 +55,7 @@ const Header = () => {
                       />
                       <div className="cartItemDetail">
                         <span>{prod.name}</span>
-                        <span>₹ {prod.price.split(".")[0]}</span>
+                        <span>UAH {prod.price.split(".")[0]}</span>
                       </div>
                       <AiFillDelete
                         fontSize="20px"
@@ -68,7 +77,7 @@ const Header = () => {
                 </>
               ) : (
                 <span style={{ padding: 10 }}>Cart is Empty!</span>
-              )} */}
+              )}
             </Dropdown.Menu>
           </Dropdown>
         </Nav>
